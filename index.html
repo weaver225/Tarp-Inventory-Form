@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tarp Order Entry</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f3; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
+    .form-wrap { width: 100%; max-width: 540px; }
+    .form-header { margin-bottom: 1.5rem; }
+    .form-header h2 { font-size: 20px; font-weight: 600; color: #1a1a1a; }
+    .form-header p { font-size: 13px; color: #888; margin-top: 4px; }
+    .form-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 1.5rem; }
+    .field { margin-bottom: 1rem; }
+    .field:last-child { margin-bottom: 0; }
+    .field label { display: block; font-size: 13px; font-weight: 500; color: #555; margin-bottom: 6px; }
+    .field input, .field select {
+      width: 100%; height: 38px; padding: 0 10px;
+      border: 1px solid #ddd; border-radius: 8px;
+      font-size: 14px; color: #1a1a1a; background: #fff;
+      outline: none; transition: border-color 0.15s;
+    }
+    .field input:focus, .field select:focus { border-color: #999; box-shadow: 0 0 0 3px rgba(0,0,0,0.06); }
+    .field select { cursor: pointer; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
+    }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .divider { border: none; border-top: 1px solid #f0f0f0; margin: 1.25rem 0; }
+    .form-actions { margin-top: 1.25rem; display: flex; gap: 8px; }
+    .btn-submit {
+      flex: 1; height: 40px; background: #1a1a1a; color: #fff;
+      border: none; border-radius: 8px; font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: opacity 0.15s;
+    }
+    .btn-submit:hover { opacity: 0.85; }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-clear {
+      height: 40px; padding: 0 16px; background: transparent; color: #555;
+      border: 1px solid #ddd; border-radius: 8px; font-size: 14px; cursor: pointer;
+    }
+    .btn-clear:hover { background: #f5f5f5; }
+    .banner { display: none; align-items: center; gap: 8px; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-top: 1rem; }
+    .banner.show { display: flex; }
+    .banner.success { background: #f0faf4; border: 1px solid #86efac; color: #166534; }
+    .banner.danger  { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; }
+    .banner.info    { background: #eff6ff; border: 1px solid #93c5fd; color: #1e40af; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .banner.success .dot { background: #166534; }
+    .banner.danger  .dot { background: #991b1b; }
+    .banner.info    .dot { background: #1e40af; }
+    .spinner { width: 14px; height: 14px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; flex-shrink: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="form-wrap">
+    <div class="form-header">
+      <h2>Tarp order entry</h2>
+      <p>Fill in the details below to log a new tarp order.</p>
+    </div>
+
+    <div class="form-card">
+      <div class="field">
+        <label for="company">Company</label>
+        <input type="text" id="company" placeholder="Company name" />
+      </div>
+      <div class="field">
+        <label for="truck">Truck number</label>
+        <input type="text" id="truck" placeholder="e.g. T-204" />
+      </div>
+
+      <hr class="divider" />
+
+      <div class="row-2">
+        <div class="field">
+          <label for="color">Tarp color</label>
+          <select id="color">
+            <option value="" disabled selected>Select color</option>
+            <option>Black</option><option>Blue</option><option>Brown</option><option>Gray</option>
+            <option>Green</option><option>Orange</option><option>Red</option><option>Silver</option>
+            <option>White</option><option>Yellow</option><option>Other</option>
+          </select>
+        </div>
+        <div></div>
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label for="length">Tarp length</label>
+          <select id="length">
+            <option value="" disabled selected>Select length</option>
+            <option>16 ft</option><option>17 ft</option><option>18 ft</option><option>19 ft</option>
+            <option>20 ft</option><option>21 ft</option><option>22 ft</option><option>23 ft</option>
+            <option>24 ft</option><option>25 ft</option><option>26 ft</option><option>27 ft</option>
+            <option>28 ft</option><option>29 ft</option><option>30 ft</option><option>31 ft</option>
+            <option>32 ft</option><option>33 ft</option><option>34 ft</option><option>35 ft</option>
+            <option>36 ft</option><option>37 ft</option><option>38 ft</option><option>39 ft</option>
+            <option>40 ft</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="width">Tarp width</label>
+          <select id="width">
+            <option value="" disabled selected>Select width</option>
+            <option>5 ft</option><option>6 ft</option><option>7 ft</option><option>8 ft</option>
+            <option>9 ft</option><option>10 ft</option><option>11 ft</option><option>12 ft</option>
+            <option>13 ft</option><option>14 ft</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row-3">
+        <div class="field">
+          <label for="bows">Number of bows</label>
+          <input type="number" id="bows" placeholder="e.g. 4" min="1" max="99" />
+        </div>
+        <div class="field">
+          <label for="bow-height">Bow height</label>
+          <input type="text" id="bow-height" placeholder='e.g. 12"' />
+        </div>
+        <div class="field">
+          <label for="bow-width">Bow width</label>
+          <input type="text" id="bow-width" placeholder='e.g. 8"' />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="cable">Cable length</label>
+        <input type="text" id="cable" placeholder="e.g. 25 ft" />
+      </div>
+
+      <hr class="divider" />
+
+      <div class="row-2">
+        <div class="field">
+          <label for="front-pulley">Front pulley size</label>
+          <select id="front-pulley">
+            <option value="" disabled selected>Select size</option>
+            <option>3"</option><option>4"</option><option>5"</option>
+            <option>6"</option><option>7"</option><option>8"</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="rear-pulley">Rear pulley size</label>
+          <select id="rear-pulley">
+            <option value="" disabled selected>Select size</option>
+            <option>3"</option><option>4"</option><option>5"</option>
+            <option>6"</option><option>7"</option><option>8"</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-clear" onclick="clearForm()">Clear</button>
+      <button class="btn-submit" id="submit-btn" onclick="submitForm()">Submit to Google Sheets</button>
+    </div>
+
+    <div class="banner" id="banner">
+      <div class="dot" id="banner-icon"></div>
+      <span id="banner-text"></span>
+    </div>
+  </div>
+
+  <script>
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxIMzM-XIh_pGjGJn4wvNWbtvwneq_Qhmeea7NFbyscILF48cEfqRftA_dBABSc2Xu08g/exec';
+
+    function getValues() {
+      return {
+        company:     document.getElementById('company').value.trim(),
+        truck:       document.getElementById('truck').value.trim(),
+        color:       document.getElementById('color').value,
+        length:      document.getElementById('length').value,
+        width:       document.getElementById('width').value,
+        bows:        document.getElementById('bows').value,
+        bowHeight:   document.getElementById('bow-height').value.trim(),
+        bowWidth:    document.getElementById('bow-width').value.trim(),
+        cable:       document.getElementById('cable').value.trim(),
+        frontPulley: document.getElementById('front-pulley').value,
+        rearPulley:  document.getElementById('rear-pulley').value,
+      };
+    }
+
+    function allFilled(v) {
+      return Object.values(v).every(x => x !== '' && x !== null && x !== undefined);
+    }
+
+    function showBanner(type, msg, spinner) {
+      const b = document.getElementById('banner');
+      b.className = 'banner show ' + type;
+      const icon = document.getElementById('banner-icon');
+      icon.className = spinner ? 'spinner' : 'dot';
+      document.getElementById('banner-text').textContent = msg;
+    }
+
+    async function submitForm() {
+      const v = getValues();
+      if (!allFilled(v)) {
+        showBanner('danger', 'Please fill in all fields before submitting.');
+        return;
+      }
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      showBanner('info', 'Sending to Google Sheets...', true);
+      try {
+        await fetch(SHEET_URL + '?' + new URLSearchParams(v).toString(), { method: 'GET', mode: 'no-cors' });
+        showBanner('success', `Order for ${v.company} — Truck ${v.truck} saved to Google Sheets.`);
+        clearForm(true);
+      } catch(err) {
+        showBanner('danger', 'Submission failed: ' + err.message);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function clearForm(keepBanner) {
+      ['company','truck','bows','bow-height','bow-width','cable'].forEach(id => document.getElementById(id).value = '');
+      ['color','length','width','front-pulley','rear-pulley'].forEach(id => document.getElementById(id).selectedIndex = 0);
+      if (!keepBanner) document.getElementById('banner').className = 'banner';
+    }
+  </script>
+</body>
+</html>
