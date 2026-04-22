@@ -3,745 +3,607 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Property ROI Analyzer</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Champs Sports Grill – Spin the Menu!</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0d0f0e;
-    --surface: #141716;
-    --card: #1a1d1b;
-    --border: #2a2e2c;
-    --accent: #c8f060;
-    --accent-dim: #8fad3a;
-    --text: #e8ece9;
-    --text-muted: #6b7570;
-    --text-dim: #9ba8a1;
-    --red: #ff5c5c;
-    --yellow: #f0c060;
-    --green: #60f090;
-    --radius: 4px;
+    --red: #C8102E;
+    --gold: #F5A623;
+    --dark: #111111;
+    --darker: #0A0A0A;
+    --mid: #1E1E1E;
+    --light: #F0EDE8;
+    --accent: #FFD700;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'IBM Plex Mono', monospace;
+    background: var(--darker);
+    color: var(--light);
+    font-family: 'Barlow', sans-serif;
     min-height: 100vh;
-    padding: 40px 20px 80px;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse at 20% 80%, rgba(200,16,46,0.12) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 20%, rgba(245,166,35,0.08) 0%, transparent 55%),
+      repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 40px,
+        rgba(255,255,255,0.012) 40px,
+        rgba(255,255,255,0.012) 41px
+      );
   }
 
-  .page-header {
-    max-width: 860px;
-    margin: 0 auto 48px;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 24px;
+  header {
+    text-align: center;
+    padding: 2rem 1rem 0.5rem;
+  }
+
+  .logo-line {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    text-shadow: 0 0 30px rgba(255,215,0,0.4), 3px 3px 0 var(--red);
+    line-height: 1;
+  }
+
+  .sub-line {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+    opacity: 0.85;
+  }
+
+  .divider {
+    width: 120px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--red), var(--gold), transparent);
+    margin: 0.8rem auto;
+  }
+
+  .category-tabs {
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 16px;
     flex-wrap: wrap;
-  }
-
-  .page-header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(28px, 5vw, 46px);
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: -1px;
-    color: var(--text);
-  }
-
-  .page-header h1 span {
-    color: var(--accent);
-  }
-
-  .tagline {
-    font-size: 11px;
-    color: var(--text-muted);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    text-align: right;
-    line-height: 1.6;
-  }
-
-  .layout {
-    max-width: 860px;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1rem;
+    max-width: 760px;
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
   }
 
-  .panel {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-  }
-
-  .panel.full {
-    grid-column: 1 / -1;
-  }
-
-  .panel-label {
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 18px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .panel-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  .field {
-    margin-bottom: 14px;
-  }
-
-  .field label {
-    display: block;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-  }
-
-  .input-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-
-  .prefix, .suffix {
-    position: absolute;
-    font-size: 13px;
-    color: var(--text-muted);
-    pointer-events: none;
-    font-family: 'IBM Plex Mono', monospace;
-  }
-
-  .prefix { left: 10px; }
-  .suffix { right: 10px; }
-
-  input[type="number"] {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 14px;
-    padding: 9px 12px;
-    outline: none;
-    transition: border-color 0.2s;
-    -moz-appearance: textfield;
-  }
-
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
-
-  input[type="number"]:focus {
-    border-color: var(--accent);
-  }
-
-  .has-prefix input { padding-left: 24px; }
-  .has-suffix input { padding-right: 28px; }
-
-  .hint {
-    font-size: 10px;
-    color: var(--text-muted);
-    margin-top: 4px;
-  }
-
-  /* Results */
-  .results-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-
-  .metric {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .metric.highlight {
-    border-color: var(--accent);
-  }
-
-  .metric-label {
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-  }
-
-  .metric-value {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px;
+  .tab-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.8rem;
     font-weight: 700;
-    line-height: 1;
-    color: var(--text);
-  }
-
-  .metric-value.good { color: var(--green); }
-  .metric-value.warn { color: var(--yellow); }
-  .metric-value.bad  { color: var(--red); }
-
-  .metric-sub {
-    font-size: 10px;
-    color: var(--text-muted);
-    margin-top: 4px;
-  }
-
-  /* Verdict */
-  .verdict {
-    border-radius: var(--radius);
-    padding: 18px 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    transition: all 0.3s;
-  }
-
-  .verdict-icon {
-    font-size: 28px;
-    flex-shrink: 0;
-  }
-
-  .verdict-text strong {
-    display: block;
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    margin-bottom: 4px;
-  }
-
-  .verdict-text p {
-    font-size: 11px;
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
-
-  .verdict.green { border-color: var(--green); }
-  .verdict.yellow { border-color: var(--yellow); }
-  .verdict.red { border-color: var(--red); }
-  .verdict.green .verdict-text strong { color: var(--green); }
-  .verdict.yellow .verdict-text strong { color: var(--yellow); }
-  .verdict.red .verdict-text strong { color: var(--red); }
-
-  /* Breakdown bar */
-  .cashflow-bar {
-    height: 6px;
-    background: var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    margin: 16px 0 6px;
-  }
-
-  .cashflow-fill {
-    height: 100%;
-    border-radius: 3px;
-    transition: width 0.4s ease;
-    background: var(--accent);
-  }
-
-  .bar-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 10px;
-    color: var(--text-muted);
-  }
-
-  /* Table */
-  .breakdown-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-  }
-
-  .breakdown-table td {
-    padding: 7px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .breakdown-table td:last-child {
-    text-align: right;
-    font-weight: 500;
-  }
-
-  .breakdown-table .total td {
-    border-bottom: none;
-    padding-top: 12px;
-    font-size: 13px;
-    color: var(--text);
-  }
-
-  .breakdown-table .positive { color: var(--green); }
-  .breakdown-table .negative { color: var(--red); }
-  .breakdown-table .neutral  { color: var(--text-muted); }
-
-  .down-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .down-row .input-wrap {
-    flex: 1;
-  }
-
-  .down-sep {
-    font-size: 10px;
-    color: var(--text-muted);
-    white-space: nowrap;
-    letter-spacing: 0.05em;
-    flex-shrink: 0;
-  }
-
-  .reset-btn {
-    display: block;
-    margin: 28px auto 0;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    padding: 10px 28px;
-    border-radius: var(--radius);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.9rem;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.04);
+    color: rgba(240,237,232,0.65);
+    border-radius: 2px;
     cursor: pointer;
     transition: all 0.2s;
+  }
+
+  .tab-btn:hover, .tab-btn.active {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+    box-shadow: 0 0 12px rgba(200,16,46,0.5);
+  }
+
+  .arena {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem 1rem 2rem;
+  }
+
+  .wheel-wrap {
+    position: relative;
+    width: min(440px, 88vw);
+    height: min(440px, 88vw);
+    flex-shrink: 0;
+  }
+
+  /* Outer ring glow */
+  .wheel-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    background: conic-gradient(var(--red), var(--gold), var(--red), var(--gold), var(--red));
+    z-index: 0;
+    animation: ringPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes ringPulse {
+    0%,100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.02); }
+  }
+
+  /* Outer metal ring */
+  .wheel-wrap::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #555, #111);
+    z-index: 1;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.8);
+  }
+
+  canvas#wheel {
+    position: relative;
+    z-index: 2;
+    border-radius: 50%;
+    display: block;
+    cursor: pointer;
+  }
+
+  /* Pointer */
+  .pointer {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7));
+  }
+
+  .pointer svg {
+    width: 40px;
+    height: 50px;
+  }
+
+  /* Center hub */
+  .hub {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px;
+    height: 64px;
+    background: radial-gradient(circle at 35% 35%, #666, #1a1a1a);
+    border-radius: 50%;
+    z-index: 10;
+    border: 3px solid var(--gold);
+    box-shadow: 0 0 20px rgba(255,215,0,0.3), inset 0 2px 6px rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.15s;
+  }
+
+  .hub:active { transform: translate(-50%,-50%) scale(0.93); }
+
+  .spin-btn {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.3rem, 4vw, 1.7rem);
+    letter-spacing: 0.12em;
+    padding: 0.75rem 3rem;
+    background: linear-gradient(135deg, var(--red) 0%, #8b0000 100%);
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(200,16,46,0.45), inset 0 1px 0 rgba(255,255,255,0.15);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .spin-btn::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.4s;
+  }
+
+  .spin-btn:hover::after { left: 150%; }
+  .spin-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(200,16,46,0.6); }
+  .spin-btn:active { transform: translateY(0); }
+  .spin-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+  /* Result card */
+  .result-card {
+    background: linear-gradient(135deg, rgba(200,16,46,0.12), rgba(30,30,30,0.9));
+    border: 1px solid rgba(245,166,35,0.3);
+    border-radius: 6px;
+    padding: 1.4rem 2rem;
+    text-align: center;
+    max-width: 420px;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+
+  .result-card.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .result-category {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.4rem;
   }
 
-  .reset-btn:hover {
-    border-color: var(--accent);
+  .result-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    letter-spacing: 0.05em;
+    color: #fff;
+    text-shadow: 2px 2px 0 var(--red);
+    line-height: 1.1;
+  }
+
+  .result-desc {
+    font-size: 0.88rem;
+    color: rgba(240,237,232,0.7);
+    margin: 0.5rem 0;
+    line-height: 1.5;
+  }
+
+  .result-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
     color: var(--accent);
+    letter-spacing: 0.08em;
   }
 
-  @media (max-width: 600px) {
-    .layout { grid-template-columns: 1fr; }
-    .panel.full { grid-column: 1; }
+  .confetti-wrap {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    overflow: hidden;
+  }
+
+  .confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 12px;
+    opacity: 0;
+    animation: confettiFall 2.5s ease-in forwards;
+  }
+
+  @keyframes confettiFall {
+    0% { opacity: 1; transform: translateY(-20px) rotate(0deg); }
+    100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+  }
+
+  .tick-indicator {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: rgba(240,237,232,0.35);
+    text-transform: uppercase;
+    margin-top: -0.5rem;
+  }
+
+  @media (min-width: 700px) {
+    .arena {
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 2rem 3rem;
+      gap: 3rem;
+    }
+    .result-card { max-width: 340px; }
   }
 </style>
 </head>
 <body>
 
-<header class="page-header">
-  <h1>Property <span>ROI</span><br>Analyzer</h1>
-  <p class="tagline">Real Estate Investment<br>Calculator</p>
+<header>
+  <div class="logo-line">🏆 Champs Sports Grill</div>
+  <div class="sub-line">State College, PA — Spin the Menu!</div>
+  <div class="divider"></div>
 </header>
 
-<div class="layout">
+<div class="category-tabs" id="categoryTabs"></div>
 
-  <!-- Purchase -->
-  <div class="panel">
-    <div class="panel-label">Purchase</div>
-
-    <div class="field">
-      <label>Purchase Price</label>
-      <div class="input-wrap has-prefix">
-        <span class="prefix">$</span>
-        <input type="number" id="purchasePrice" value="350000" oninput="syncDown('dollar'); calc()">
+<div class="arena">
+  <div>
+    <div class="wheel-wrap">
+      <div class="pointer">
+        <svg viewBox="0 0 40 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="20,48 2,4 38,4" fill="#C8102E" stroke="#FFD700" stroke-width="2"/>
+          <circle cx="20" cy="8" r="5" fill="#FFD700"/>
+        </svg>
       </div>
+      <canvas id="wheel"></canvas>
+      <div class="hub" id="hubBtn">SPIN</div>
     </div>
-
-    <div class="field">
-      <label>Down Payment</label>
-      <div class="down-row">
-        <div class="input-wrap has-prefix">
-          <span class="prefix">$</span>
-          <input type="number" id="downPayment" value="70000" oninput="syncDown('dollar')">
-        </div>
-        <div class="down-sep">or</div>
-        <div class="input-wrap has-suffix">
-          <input type="number" id="downPct" value="20" step="0.5" oninput="syncDown('pct')">
-          <span class="suffix">%</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Interest Rate</label>
-      <div class="input-wrap has-suffix">
-        <input type="number" id="interestRate" value="7.0" step="0.1" oninput="calc()">
-        <span class="suffix">%</span>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Loan Term</label>
-      <div class="input-wrap has-suffix">
-        <input type="number" id="loanTerm" value="30" oninput="calc()">
-        <span class="suffix">yrs</span>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Closing Costs</label>
-      <div class="input-wrap has-prefix">
-        <span class="prefix">$</span>
-        <input type="number" id="closingCosts" value="7000" oninput="calc()">
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Rehab / Repairs</label>
-      <div class="input-wrap has-prefix">
-        <span class="prefix">$</span>
-        <input type="number" id="rehab" value="0" oninput="calc()">
-      </div>
-    </div>
+    <p class="tick-indicator" style="text-align:center;margin-top:0.6rem;">← click wheel or button to spin →</p>
   </div>
 
-  <!-- Income & Expenses -->
-  <div class="panel">
-    <div class="panel-label">Income & Expenses</div>
-
-    <div class="field">
-      <label>Monthly Rent</label>
-      <div class="input-wrap has-prefix">
-        <span class="prefix">$</span>
-        <input type="number" id="rent" value="2200" oninput="calc()">
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Vacancy Rate</label>
-      <div class="input-wrap has-suffix">
-        <input type="number" id="vacancy" value="5" step="0.5" oninput="calc()">
-        <span class="suffix">%</span>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Property Tax (Annual)</label>
-      <div class="input-wrap has-prefix">
-        <span class="prefix">$</span>
-        <input type="number" id="propTax" value="4200" oninput="calc()">
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Insurance (Annual)</label>
-      <div class="input-wrap has-prefix">
-        <span class="prefix">$</span>
-        <input type="number" id="insurance" value="1200" oninput="calc()">
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Maintenance (Annual)</label>
-      <div class="input-wrap has-prefix">
-        <span class="prefix">$</span>
-        <input type="number" id="maintenance" value="2000" oninput="calc()">
-      </div>
-      <div class="hint">Typically 1% of purchase price/yr</div>
-    </div>
-
-    <div class="field">
-      <label>Property Mgmt</label>
-      <div class="input-wrap has-suffix">
-        <input type="number" id="mgmt" value="0" step="0.5" oninput="calc()">
-        <span class="suffix">%</span>
-      </div>
-      <div class="hint">% of gross rent (0 if self-managed)</div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:1rem;">
+    <button class="spin-btn" id="spinBtn">🎰 SPIN IT!</button>
+    <div class="result-card" id="resultCard">
+      <div class="result-category" id="resultCat"></div>
+      <div class="result-name" id="resultName"></div>
+      <div class="result-desc" id="resultDesc"></div>
+      <div class="result-price" id="resultPrice"></div>
     </div>
   </div>
-
-  <!-- Results -->
-  <div class="panel full">
-    <div class="panel-label">Analysis</div>
-
-    <div class="results-grid">
-      <div class="metric highlight">
-        <div class="metric-label">Cash-on-Cash ROI</div>
-        <div class="metric-value" id="cocROI">—</div>
-        <div class="metric-sub">Annual / cash invested</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Cap Rate</div>
-        <div class="metric-value" id="capRate">—</div>
-        <div class="metric-sub">NOI / purchase price</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Monthly Cash Flow</div>
-        <div class="metric-value" id="monthlyCF">—</div>
-        <div class="metric-sub">After all expenses</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Gross Rent Mult.</div>
-        <div class="metric-value" id="grm">—</div>
-        <div class="metric-sub">Price / annual rent</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">1% Rule</div>
-        <div class="metric-value" id="onePercent">—</div>
-        <div class="metric-sub">Rent / price (≥1% = good)</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Breakeven Occ.</div>
-        <div class="metric-value" id="breakeven">—</div>
-        <div class="metric-sub">Min occupancy needed</div>
-      </div>
-    </div>
-
-    <div class="cashflow-bar">
-      <div class="cashflow-fill" id="cfBar" style="width:0%"></div>
-    </div>
-    <div class="bar-labels">
-      <span>Total Expenses</span>
-      <span id="barLabel">—</span>
-    </div>
-  </div>
-
-  <!-- Breakdown -->
-  <div class="panel">
-    <div class="panel-label">Monthly Breakdown</div>
-    <table class="breakdown-table">
-      <tbody>
-        <tr><td class="neutral">Gross Rent</td><td class="positive" id="bRent">—</td></tr>
-        <tr><td class="neutral">Vacancy Loss</td><td class="negative" id="bVacancy">—</td></tr>
-        <tr><td class="neutral">Mortgage (P&I)</td><td class="negative" id="bMortgage">—</td></tr>
-        <tr><td class="neutral">Property Tax</td><td class="negative" id="bTax">—</td></tr>
-        <tr><td class="neutral">Insurance</td><td class="negative" id="bInsurance">—</td></tr>
-        <tr><td class="neutral">Maintenance</td><td class="negative" id="bMaint">—</td></tr>
-        <tr><td class="neutral">Mgmt Fee</td><td class="negative" id="bMgmt">—</td></tr>
-        <tr class="total">
-          <td><strong>Net Cash Flow</strong></td>
-          <td id="bNet">—</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Verdict -->
-  <div class="panel">
-    <div class="panel-label">Verdict</div>
-    <div class="verdict" id="verdict">
-      <div class="verdict-icon" id="verdictIcon">🏠</div>
-      <div class="verdict-text">
-        <strong id="verdictTitle">Enter your numbers</strong>
-        <p id="verdictDesc">Fill in the purchase and income fields to see your investment analysis.</p>
-      </div>
-    </div>
-
-    <br>
-
-    <div class="panel-label">Total Cash Required</div>
-    <table class="breakdown-table">
-      <tbody>
-        <tr><td class="neutral">Down Payment</td><td id="cDown">—</td></tr>
-        <tr><td class="neutral">Closing Costs</td><td id="cClosing">—</td></tr>
-        <tr><td class="neutral">Rehab</td><td id="cRehab">—</td></tr>
-        <tr class="total">
-          <td><strong>All-In Cash</strong></td>
-          <td id="cTotal">—</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
 </div>
 
-<button class="reset-btn" onclick="resetForm()">↺ Reset to Defaults</button>
+<div class="confetti-wrap" id="confettiWrap"></div>
 
 <script>
-const defaults = {
-  purchasePrice: 350000, downPayment: 70000, downPct: 20, interestRate: 7.0,
-  loanTerm: 30, closingCosts: 7000, rehab: 0,
-  rent: 2200, vacancy: 5, propTax: 4200,
-  insurance: 1200, maintenance: 2000, mgmt: 0
+const MENU = {
+  "Appeteasers": [
+    { name: "Philly Special", desc: "Cheesesteak eggroll — American, onions, mushrooms, sriracha ketchup", price: "$10.99" },
+    { name: "Stanley's Wonder Wings", desc: "Choose 10, 20 or 40 wings: meek, arrogant, obnoxious, BBQ, southwestern, original, Harlicky, or Camp Raystown. Served with bleu cheese & celery", price: "From $15.99" },
+    { name: "Bullfight Nachos", desc: "Fresh-cut tortilla chips, melted cheddar, sour cream, guacamole, salsa, chili, tomatoes, lettuce, scallions & jalapeños", price: "$13.59" },
+    { name: "Buffalo Shrimp", desc: "Flash fried, tossed in Champs original wing sauce, served with bleu cheese", price: "$12.99" },
+    { name: "Knuckle Ball", desc: "Softball-sized housemade meatball braised in red sauce, ricotta & basil", price: "$14.99" },
+    { name: "Brock Crock of Mussels", desc: "Mussels, chorizo, shallots, garlic, fresh herbs & a crusty half-loaf for dipping", price: "$16.99" },
+    { name: "Calamari", desc: "Tender calamari flash fried, on vodka sauce with provençal sauce", price: "$15.79" },
+    { name: "Jaworski's Pierogies", desc: "Sautéed in butter and onions with sour cream", price: "$11.99" },
+    { name: "Rollie Fingers", desc: "Fried chicken fingers with a side of ranch", price: "$11.99" },
+  ],
+  "Burgers": [
+    { name: "All American", desc: "8 oz. grilled mushrooms, onions and American cheese. Lettuce, tomato, onion, pickle & chips", price: "$13.99" },
+    { name: "New Yorker", desc: "8 oz. grilled bacon, mushrooms and Swiss. Lettuce, tomato, onion, pickle & chips", price: "$14.59" },
+    { name: "Captain Lou Albano", desc: "8 oz. burger with hot sausage patty, sweet peppers, grilled onions, pepper jack cheese & mayo", price: "$14.99" },
+    { name: "Cincy Bengal", desc: "Two 4-oz. smashed burgers stacked, American cheese, chili, onion, house-made mustard", price: "$13.99" },
+    { name: "Roethlisberger", desc: "L,T,O, slaw, Thousand Island topped with fries", price: "$13.99" },
+    { name: "Rampage Jackson", desc: "8oz burger, caramelized onions, roasted poblano peppers, cheddar & special BBQ sauce", price: "$14.59" },
+    { name: "Champs Chickie", desc: "Staff favorite! Ground chicken blended with cheese & herbs, LTO, mayo on brioche", price: "$12.99" },
+  ],
+  "Favorites": [
+    { name: "Cheesesteak", desc: "Classic Philly-style cheesesteak with grilled onions & your choice of cheese", price: "Market price" },
+    { name: "Fish & Chips", desc: "Beer-battered cod, golden fries & tartar sauce", price: "Market price" },
+    { name: "Chicken Parm", desc: "Breaded chicken, marinara & mozzarella on house bread", price: "Market price" },
+  ],
+  "Pizza": [
+    { name: "Pepperoni Pizza", desc: "Classic pepperoni on housemade dough with red sauce & mozzarella", price: "Market price" },
+    { name: "Buffalo Chicken Pizza", desc: "Buffalo sauce base, grilled chicken, mozzarella, bleu cheese drizzle", price: "Market price" },
+    { name: "Margherita Pizza", desc: "Red sauce, fresh mozzarella, basil, EVOO", price: "Market price" },
+  ],
+  "Hoagies": [
+    { name: "Italian Hoagie", desc: "Capicola, salami, ham, provolone, LTO, oil & vinegar on a long roll", price: "Market price" },
+    { name: "Turkey Club", desc: "Roasted turkey, bacon, Swiss, LTO, mayo", price: "Market price" },
+    { name: "Tuna Melt", desc: "Housemade tuna salad, cheddar, toasted on ciabatta", price: "Market price" },
+  ],
+  "Salads": [
+    { name: "Chicken Caesar", desc: "Romaine, grilled chicken, house Caesar dressing, croutons, parmesan", price: "Market price" },
+    { name: "Cobb Salad", desc: "Mixed greens, grilled chicken, bacon, egg, bleu cheese, tomato, avocado", price: "Market price" },
+    { name: "Greek Salad", desc: "Romaine, kalamata olives, cucumbers, tomatoes, feta, red onion, Greek dressing", price: "Market price" },
+  ],
+  "Steaks": [
+    { name: "NY Strip", desc: "12 oz. hand-cut NY strip, served with choice of two sides", price: "Market price" },
+    { name: "Ribeye", desc: "14 oz. char-grilled ribeye with garlic butter & two sides", price: "Market price" },
+    { name: "Sirloin Tips", desc: "Marinated sirloin tips, sautéed peppers & onions, choice of side", price: "Market price" },
+  ],
+  "Desserts": [
+    { name: "Chocolate Brownie Sundae", desc: "Warm housemade brownie, vanilla ice cream, hot fudge, whipped cream", price: "Market price" },
+    { name: "Cheesecake", desc: "New York-style cheesecake with strawberry topping", price: "Market price" },
+  ],
 };
 
-function fmt(n, decimals = 0) {
-  if (isNaN(n) || !isFinite(n)) return '—';
-  const abs = Math.abs(n);
-  const s = abs.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
-  return (n < 0 ? '-$' : '$') + s;
+const COLORS = [
+  ["#C8102E","#fff"],["#1a1a2e","#FFD700"],["#8b0000","#F0EDE8"],
+  ["#2d2d2d","#F5A623"],["#C8102E","#FFD700"],["#111827","#fff"],
+  ["#7b1c1c","#F0EDE8"],["#1e3a5f","#F5A623"],
+];
+
+let currentCategory = "All";
+let items = [];
+let spinning = false;
+let currentAngle = 0;
+let animFrame = null;
+
+function getAllItems() {
+  const all = [];
+  Object.entries(MENU).forEach(([cat, arr]) => arr.forEach(item => all.push({...item, category: cat})));
+  return all;
 }
 
-function pct(n, decimals = 1) {
-  if (isNaN(n) || !isFinite(n)) return '—';
-  return n.toFixed(decimals) + '%';
+function getItems(cat) {
+  if (cat === "All") return getAllItems();
+  return (MENU[cat] || []).map(i => ({...i, category: cat}));
 }
 
-function g(id) { return parseFloat(document.getElementById(id).value) || 0; }
-function s(id, val) { document.getElementById(id).textContent = val; }
+// Build category tabs
+const tabsEl = document.getElementById('categoryTabs');
+["All", ...Object.keys(MENU)].forEach(cat => {
+  const btn = document.createElement('button');
+  btn.className = 'tab-btn' + (cat === "All" ? ' active' : '');
+  btn.textContent = cat;
+  btn.onclick = () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCategory = cat;
+    items = getItems(cat);
+    currentAngle = 0;
+    hideResult();
+    drawWheel(currentAngle);
+  };
+  tabsEl.appendChild(btn);
+});
 
-function colorClass(val, goodThresh, warnThresh) {
-  if (val >= goodThresh) return 'good';
-  if (val >= warnThresh) return 'warn';
-  return 'bad';
+// Canvas setup
+const canvas = document.getElementById('wheel');
+const ctx = canvas.getContext('2d');
+const SIZE = Math.min(440, window.innerWidth * 0.88);
+canvas.width = SIZE;
+canvas.height = SIZE;
+
+function drawWheel(rotation) {
+  const cx = SIZE / 2, cy = SIZE / 2, r = SIZE / 2 - 4;
+  ctx.clearRect(0, 0, SIZE, SIZE);
+  if (!items.length) return;
+
+  const sliceAngle = (Math.PI * 2) / items.length;
+
+  items.forEach((item, i) => {
+    const start = rotation + i * sliceAngle;
+    const end = start + sliceAngle;
+    const [bg, fg] = COLORS[i % COLORS.length];
+
+    // Slice
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, end);
+    ctx.closePath();
+    ctx.fillStyle = bg;
+    ctx.fill();
+
+    // Border
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Label
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(start + sliceAngle / 2);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = fg;
+
+    const maxLen = 14;
+    let label = item.name.length > maxLen ? item.name.substring(0, maxLen - 1) + '…' : item.name;
+
+    const fontSize = Math.max(9, Math.min(14, SIZE / (items.length * 1.6)));
+    ctx.font = `700 ${fontSize}px 'Barlow Condensed', sans-serif`;
+    ctx.letterSpacing = '0.05em';
+    ctx.fillText(label, r - 14, 4);
+    ctx.restore();
+  });
+
+  // Inner shadow circle
+  const grad = ctx.createRadialGradient(cx, cy, r * 0.3, cx, cy, r);
+  grad.addColorStop(0, 'rgba(0,0,0,0.35)');
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = grad;
+  ctx.fill();
 }
 
-function syncDown(source) {
-  const price = g('purchasePrice');
-  if (source === 'dollar') {
-    const dollar = g('downPayment');
-    document.getElementById('downPct').value = price > 0 ? ((dollar / price) * 100).toFixed(2) : '';
-  } else {
-    const p = g('downPct');
-    document.getElementById('downPayment').value = (price * p / 100).toFixed(0);
+function getWinner(rotation) {
+  // Pointer is at top = -π/2
+  const norm = (((-rotation - Math.PI / 2) % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+  const sliceAngle = (Math.PI * 2) / items.length;
+  return Math.floor(norm / sliceAngle) % items.length;
+}
+
+function showResult(item) {
+  const card = document.getElementById('resultCard');
+  document.getElementById('resultCat').textContent = item.category;
+  document.getElementById('resultName').textContent = item.name;
+  document.getElementById('resultDesc').textContent = item.desc;
+  document.getElementById('resultPrice').textContent = item.price;
+  card.classList.add('visible');
+  launchConfetti();
+}
+
+function hideResult() {
+  document.getElementById('resultCard').classList.remove('visible');
+}
+
+function launchConfetti() {
+  const wrap = document.getElementById('confettiWrap');
+  wrap.innerHTML = '';
+  const colors = ['#C8102E','#FFD700','#F5A623','#fff','#8b0000','#F0EDE8'];
+  for (let i = 0; i < 60; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `
+      left: ${Math.random() * 100}vw;
+      top: -10px;
+      background: ${colors[Math.floor(Math.random() * colors.length)]};
+      transform: rotate(${Math.random() * 360}deg);
+      animation-delay: ${Math.random() * 0.6}s;
+      animation-duration: ${1.8 + Math.random() * 1.4}s;
+      border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+    `;
+    wrap.appendChild(el);
   }
-  calc();
+  setTimeout(() => { wrap.innerHTML = ''; }, 4000);
 }
 
-function calc() {
-  const price     = g('purchasePrice');
-  const down      = g('downPayment');
-  const rate      = g('interestRate') / 100 / 12;
-  const nPayments = g('loanTerm') * 12;
-  const closing   = g('closingCosts');
-  const rehab     = g('rehab');
-  const rent      = g('rent');
-  const vacRate   = g('vacancy') / 100;
-  const propTax   = g('propTax');
-  const insurance = g('insurance');
-  const maint     = g('maintenance');
-  const mgmtPct   = g('mgmt') / 100;
+function spin() {
+  if (spinning || items.length === 0) return;
+  spinning = true;
+  hideResult();
+  document.getElementById('spinBtn').disabled = true;
 
-  // Mortgage
-  const principal = price - down;
-  let mortgage = 0;
-  if (rate > 0 && nPayments > 0 && principal > 0) {
-    mortgage = principal * (rate * Math.pow(1 + rate, nPayments)) / (Math.pow(1 + rate, nPayments) - 1);
+  const extraSpins = 6 + Math.random() * 4; // 6-10 full rotations
+  const targetAngle = currentAngle + extraSpins * Math.PI * 2 + Math.random() * Math.PI * 2;
+  const duration = 4000 + Math.random() * 1500;
+  const startAngle = currentAngle;
+  const startTime = performance.now();
+
+  // Sound-like tick tracking
+  let lastTick = 0;
+
+  function easeOut(t) {
+    return 1 - Math.pow(1 - t, 4);
   }
 
-  // Monthly figures
-  const grossRent    = rent;
-  const vacancyLoss  = grossRent * vacRate;
-  const effRent      = grossRent - vacancyLoss;
-  const taxMo        = propTax / 12;
-  const insurMo      = insurance / 12;
-  const maintMo      = maint / 12;
-  const mgmtFee      = grossRent * mgmtPct;
+  function animate(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const easedProgress = easeOut(progress);
+    currentAngle = startAngle + (targetAngle - startAngle) * easedProgress;
 
-  const totalExpenses = mortgage + taxMo + insurMo + maintMo + mgmtFee;
-  const noi_monthly  = effRent - taxMo - insurMo - maintMo - mgmtFee;
-  const cashFlow     = effRent - totalExpenses;
+    // Tick sound approximation via vibration / visual blip
+    const tickInterval = (Math.PI * 2) / items.length;
+    const tickPos = Math.floor(currentAngle / tickInterval);
+    if (tickPos !== lastTick) {
+      lastTick = tickPos;
+    }
 
-  // Annual
-  const annualNOI    = noi_monthly * 12;
-  const annualCF     = cashFlow * 12;
-  const allInCash    = down + closing + rehab;
+    drawWheel(currentAngle);
 
-  // Metrics
-  const capRate      = price > 0 ? (annualNOI / price) * 100 : 0;
-  const cocROI       = allInCash > 0 ? (annualCF / allInCash) * 100 : 0;
-  const grm          = (rent * 12) > 0 ? price / (rent * 12) : 0;
-  const onePct       = price > 0 ? (rent / price) * 100 : 0;
-  const beOcc        = rent > 0 ? Math.min(100, (totalExpenses / rent) * 100) : 0;
-
-  // Expense ratio for bar
-  const incomeRatio  = rent > 0 ? Math.min(100, (totalExpenses / rent) * 100) : 0;
-
-  // Render metrics
-  const cocEl = document.getElementById('cocROI');
-  cocEl.textContent = pct(cocROI);
-  cocEl.className = 'metric-value ' + colorClass(cocROI, 8, 4);
-
-  const capEl = document.getElementById('capRate');
-  capEl.textContent = pct(capRate);
-  capEl.className = 'metric-value ' + colorClass(capRate, 6, 4);
-
-  const cfEl = document.getElementById('monthlyCF');
-  cfEl.textContent = fmt(cashFlow);
-  cfEl.className = 'metric-value ' + colorClass(cashFlow, 200, 0);
-
-  s('grm', grm > 0 ? grm.toFixed(1) + 'x' : '—');
-  const opEl = document.getElementById('onePercent');
-  opEl.textContent = pct(onePct);
-  opEl.className = 'metric-value ' + colorClass(onePct, 1, 0.7);
-
-  const beEl = document.getElementById('breakeven');
-  beEl.textContent = pct(beOcc);
-  beEl.className = 'metric-value ' + (beOcc <= 80 ? 'good' : beOcc <= 95 ? 'warn' : 'bad');
-
-  // Bar
-  document.getElementById('cfBar').style.width = Math.min(100, incomeRatio) + '%';
-  document.getElementById('cfBar').style.background =
-    incomeRatio < 75 ? 'var(--green)' : incomeRatio < 95 ? 'var(--yellow)' : 'var(--red)';
-  document.getElementById('barLabel').textContent = pct(incomeRatio) + ' of rent';
-
-  // Breakdown
-  s('bRent',     fmt(grossRent));
-  s('bVacancy',  '-' + fmt(vacancyLoss));
-  s('bMortgage', '-' + fmt(mortgage));
-  s('bTax',      '-' + fmt(taxMo));
-  s('bInsurance','-' + fmt(insurMo));
-  s('bMaint',    '-' + fmt(maintMo));
-  s('bMgmt',     '-' + fmt(mgmtFee));
-  const netEl = document.getElementById('bNet');
-  netEl.textContent = fmt(cashFlow);
-  netEl.className = cashFlow >= 0 ? 'positive' : 'negative';
-
-  // Cash required
-  s('cDown',    fmt(down));
-  s('cClosing', fmt(closing));
-  s('cRehab',   fmt(rehab));
-  s('cTotal',   fmt(allInCash));
-
-  // Verdict
-  const verdict = document.getElementById('verdict');
-  const vIcon   = document.getElementById('verdictIcon');
-  const vTitle  = document.getElementById('verdictTitle');
-  const vDesc   = document.getElementById('verdictDesc');
-
-  const score = (cocROI >= 8 ? 2 : cocROI >= 4 ? 1 : 0)
-              + (capRate >= 6 ? 2 : capRate >= 4 ? 1 : 0)
-              + (cashFlow >= 200 ? 2 : cashFlow >= 0 ? 1 : 0)
-              + (onePct >= 1 ? 1 : 0);
-
-  if (score >= 6) {
-    verdict.className = 'verdict green';
-    vIcon.textContent = '🟢';
-    vTitle.textContent = 'Strong Buy';
-    vDesc.textContent = `CoC ROI of ${pct(cocROI)} and $${Math.round(cashFlow)}/mo cash flow — solid fundamentals across the board.`;
-  } else if (score >= 4) {
-    verdict.className = 'verdict green';
-    vIcon.textContent = '✅';
-    vTitle.textContent = 'Decent Deal';
-    vDesc.textContent = `Numbers look reasonable. Cap rate ${pct(capRate)} and ${pct(cocROI)} CoC ROI. Worth exploring further.`;
-  } else if (score >= 2) {
-    verdict.className = 'verdict yellow';
-    vIcon.textContent = '⚠️';
-    vTitle.textContent = 'Marginal';
-    vDesc.textContent = `Some metrics are below benchmark. Thin cash flow or weak returns — negotiate price down or increase rent.`;
-  } else {
-    verdict.className = 'verdict red';
-    vIcon.textContent = '🔴';
-    vTitle.textContent = 'Poor Investment';
-    vDesc.textContent = `Negative or near-zero cash flow with weak ROI. At current numbers this property would cost you money.`;
+    if (progress < 1) {
+      animFrame = requestAnimationFrame(animate);
+    } else {
+      spinning = false;
+      document.getElementById('spinBtn').disabled = false;
+      const winIdx = getWinner(currentAngle);
+      showResult(items[winIdx]);
+    }
   }
+
+  animFrame = requestAnimationFrame(animate);
 }
 
-function resetForm() {
-  for (const [k, v] of Object.entries(defaults)) {
-    document.getElementById(k).value = v;
-  }
-  calc();
-}
+// Init
+items = getItems("All");
+drawWheel(0);
 
-calc();
+document.getElementById('spinBtn').addEventListener('click', spin);
+document.getElementById('hubBtn').addEventListener('click', spin);
+canvas.addEventListener('click', spin);
 </script>
 </body>
 </html>
